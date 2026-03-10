@@ -421,3 +421,4 @@ FodyWeavers.xsd
 .venv
 .DS_Store
 .history/
+inputs
