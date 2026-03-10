@@ -1,0 +1,63 @@
+run:
+  stage: stage3
+  run_id: stage3_nonlinear_mainrule_n1_YYYYMMDD_HHMMSS_0305
+  random_seed: 20260305
+
+paths:
+  input_csv: data/AI_database_chrome__llm_final_R1.csv
+  run_root: artifacts/stage3/nonlinear_mainrule/stage3_nonlinear_mainrule_n1_YYYYMMDD_HHMMSS_0305
+  log_dir: artifacts/stage3/nonlinear_mainrule/stage3_nonlinear_mainrule_n1_YYYYMMDD_HHMMSS_0305/logs
+  part1_out_dir: artifacts/stage3/nonlinear_mainrule/stage3_nonlinear_mainrule_n1_YYYYMMDD_HHMMSS_0305/part1
+  part2_out_dir: artifacts/stage3/nonlinear_mainrule/stage3_nonlinear_mainrule_n1_YYYYMMDD_HHMMSS_0305/part2
+
+versions:
+  schema_version: r1_schema_v1
+  threshold_version: r1_default_v1
+  signal_group_mapping_version: infra_signal_groups_v0305
+  feature_mode_version: nonlinear_cont_only_mainrule_v0305
+
+execution:
+  part1_entry: scripts/stage3/01_data_prep_and_feature_derivation.py
+  part2_entry: scripts/stage3/02_model_execution_and_audit.py
+  n_repeats: 100
+  min_valid_splits: 80
+  enable_3way: false
+  export_debug_artifacts: false
+  enable_c3_slice_supplement: true
+  enforce_cross_signal_publishable: true
+  interaction_promotion_mode: per_model_independent_gate
+  model_subset: [ebm, gbdt]
+  feature_modes: [cont_only]
+  branch_subset: [mainline, mainline_plus_pairwise]
+  cont_plus_bin_model_subset: []
+  feature_mode_main_fit: explicit_feature_mode_matrix
+  candidate_discovery_mode: mixed_wide_discovery_narrow_publish
+  rulebook_publish_mode: nonlinear_cont_only_model_derived_primary
+  data_driven_release_grid: optional_tier2plus_sensitivity
+  missing_rulebook_policy: sensitivity_only
+  rule_publish_gate: rule_level_L0_support_stability
+  branch_promotion_gate: delta_ci_plus_warning_plus_hard_audits
+  linear_continuous_effect_export: true
+  threshold_grid_on_ci_insufficient: true
+  pair_discovery_limit: 12
+  pair_limit: 4
+  triple_discovery_limit: 0
+  triple_limit: 0
+  loky_max_cpu_count: 1
+  workspace_execution_md: process/stage3_execution_log.md
+  nonlinear_cont_only_rulebook:
+    primary_source: model_derived
+    engineered_comparison_enabled: true
+    min_support_n: auto
+    min_support_pos: auto
+    min_enrichment: auto
+    max_rules_per_feature: 3
+
+unstable_explanation:
+  enabled: true
+  support_n_min: 10
+  support_pos_min: 2
+  enrichment_min: 1.2
+  selection_freq_min: 0.50
+  top_n: 10
+
